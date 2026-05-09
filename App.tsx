@@ -139,9 +139,9 @@ function App(): React.JSX.Element {
           </Text>
 
           <Text style={[styles.description, {color: theme.subtext}]}>
-            ¡Una calculadora práctica para{'\n'}
+            Una calculadora práctica para{'\n'}
             resolver operaciones del día a día,{'\n'}
-            sin complicarte!
+            ¡sin complicarte!
           </Text>
 
           <View style={styles.modeContainer}>
