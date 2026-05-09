@@ -6,232 +6,387 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator();
+function App(): React.JSX.Element {
+  const [display, setDisplay] = useState('0');
+  const [expression, setExpression] = useState('');
+  const [darkMode, setDarkMode] = useState(true);
+  const [currentScreen, setCurrentScreen] = useState('home');
 
-function HomeScreen({navigation}: any) {
-  const [modoOscuro, setModoOscuro] = useState(true);
-
-  const tema = modoOscuro
+  const theme = darkMode
     ? {
-        fondo: '#0F1028',
-        tarjeta: '#15173A',
-        titulo: '#FFFFFF',
-        texto: '#D8D8E8',
+        background: '#0b0b2e',
+        card: '#16164d',
+        text: '#ffffff',
+        subtext: '#d6c8ff',
+        primary: '#8a2eff',
+        secondary: '#d13fb8',
+        button: '#f2f2f2',
+        buttonText: '#5d2bc1',
+        display: '#050014',
+        border: '#8a2eff',
       }
     : {
-        fondo: '#F3EAFD',
-        tarjeta: '#E8DCF7',
-        titulo: '#5A22B8',
-        texto: '#6E4A91',
+        background: '#f3eaff',
+        card: '#e2d7ef',
+        text: '#5d2bc1',
+        subtext: '#6f4d99',
+        primary: '#8a2eff',
+        secondary: '#d13fb8',
+        button: '#f2f2f2',
+        buttonText: '#5d2bc1',
+        display: '#050014',
+        border: '#8a2eff',
       };
 
-  return (
-    <SafeAreaView style={[styles.container, {backgroundColor: tema.fondo}]}>
-      <View style={[styles.card, {backgroundColor: tema.tarjeta}]}>
-        <Text style={styles.pequeno}>Pantalla principal</Text>
+  const handlePress = (value: string) => {
+    if (display === '0') {
+      setDisplay(value);
+    } else {
+      setDisplay(display + value);
+    }
 
-        <View style={styles.iconoContainer}>
-          <Text style={styles.estrella}>✦</Text>
-        </View>
+    setExpression(prev => prev + value);
+  };
 
-        <Text style={[styles.titulo, {color: tema.titulo}]}>
-          Tecmi{'\n'}Calculator
-        </Text>
+  const clearDisplay = () => {
+    setDisplay('0');
+    setExpression('');
+  };
 
-        <Text style={[styles.descripcion, {color: tema.texto}]}>
-          Una calculadora práctica para resolver operaciones del día a día, ¡sin
-          complicarte!
-        </Text>
+  const calculateResult = () => {
+    try {
+      const formattedExpression = expression.replace(/×/g, '*');
 
-        <View style={styles.botonesModo}>
+      const result = eval(formattedExpression);
+
+      setDisplay(result.toString());
+
+      // ESTE CAMBIO hace que se vea TODA la operación
+      setExpression(expression + ' =');
+    } catch (error) {
+      setDisplay('Error');
+    }
+  };
+
+  if (currentScreen === 'home') {
+    return (
+      <SafeAreaView
+        style={[
+          styles.container,
+          {backgroundColor: theme.background},
+        ]}>
+        <View
+          style={[
+            styles.card,
+            {backgroundColor: theme.card},
+          ]}>
+          <Text
+            style={[
+              styles.subtitle,
+              {color: theme.primary},
+            ]}>
+            Pantalla principal
+          </Text>
+
+          <View
+            style={[
+              styles.logo,
+              {backgroundColor: theme.secondary},
+            ]}>
+            <Text style={styles.logoText}>✦</Text>
+          </View>
+
+          <Text
+            style={[
+              styles.title,
+              {color: theme.text},
+            ]}>
+            Tecmi{'\n'}Calculator
+          </Text>
+
+          <Text
+            style={[
+              styles.description,
+              {color: theme.subtext},
+            ]}>
+            ¡Una calculadora práctica para{'\n'}
+            resolver operaciones del día a día,{'\n'}
+            sin complicarte!
+          </Text>
+
+          <View style={styles.modeContainer}>
+            <TouchableOpacity
+              style={[
+                styles.modeButton,
+                {
+                  backgroundColor: '#f2f2f2',
+                  borderColor: theme.primary,
+                  borderWidth: 3,
+                },
+              ]}
+              onPress={() => setDarkMode(false)}>
+              <Text style={styles.modeIcon}>☀️</Text>
+
+              <Text
+                style={[
+                  styles.modeText,
+                  {color: theme.primary},
+                ]}>
+                Modo claro
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.modeButton,
+                {
+                  backgroundColor: darkMode ? '#000000' : '#f2f2f2',
+                  borderColor: theme.primary,
+                  borderWidth: 3,
+                },
+              ]}
+              onPress={() => setDarkMode(true)}>
+              <Text
+                style={[
+                  styles.modeIcon,
+                  {
+                    color: darkMode ? '#ffffff' : theme.primary,
+                  },
+                ]}>
+                ☾
+              </Text>
+
+              <Text
+                style={[
+                  styles.modeText,
+                  {
+                    color: darkMode ? '#ffffff' : theme.primary,
+                  },
+                ]}>
+                Modo noche
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <TouchableOpacity
             style={[
-              styles.botonModo,
-              {
-                backgroundColor: '#FFFFFF',
-                borderColor: '#8A2EFF',
-                borderWidth: !modoOscuro ? 2 : 0,
-              },
+              styles.startButton,
+              {backgroundColor: theme.primary},
             ]}
-            onPress={() => setModoOscuro(false)}>
-            <Text style={styles.iconoModo}>☀️</Text>
-            <Text style={styles.textoMorado}>Modo claro</Text>
+            onPress={() => setCurrentScreen('calculator')}>
+            <Text style={styles.startButtonText}>
+              Empezar
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView
+      style={[
+        styles.container,
+        {backgroundColor: theme.background},
+      ]}>
+      <View
+        style={[
+          styles.card,
+          {backgroundColor: theme.card},
+        ]}>
+        <Text
+          style={[
+            styles.subtitle,
+            {color: theme.primary},
+          ]}>
+          Pantalla calculadora
+        </Text>
+
+        <View
+          style={[
+            styles.displayContainer,
+            {backgroundColor: theme.display},
+          ]}>
+          {/* CAMBIO: ahora la operación completa se ve mejor */}
+          <Text
+            style={[
+              styles.expressionText,
+              {color: '#cdb7ff'},
+            ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit>
+            {expression}
+          </Text>
+
+          <Text
+            style={[
+              styles.displayText,
+              {color: '#ffffff'},
+            ]}>
+            {display}
+          </Text>
+        </View>
+
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            style={[
+              styles.actionButton,
+              {backgroundColor: theme.secondary},
+            ]}
+            onPress={clearDisplay}>
+            <Text style={styles.actionText}>C</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[
-              styles.botonModo,
-              {
-                backgroundColor: modoOscuro ? '#000000' : '#FFFFFF',
-                borderColor: '#8A2EFF',
-                borderWidth: modoOscuro ? 2 : 0,
-              },
+              styles.actionButton,
+              {backgroundColor: theme.primary},
             ]}
-            onPress={() => setModoOscuro(true)}>
-            <Text style={[styles.iconoModo, {color: modoOscuro ? '#FFFFFF' : '#6B35E2'}]}>
-              ☾
+            onPress={() => handlePress('÷')}>
+            <Text style={styles.actionText}>÷</Text>
+          </TouchableOpacity>
+
+          {['7', '8', '9'].map(num => (
+            <TouchableOpacity
+              key={num}
+              style={[
+                styles.numberButton,
+                {backgroundColor: theme.button},
+              ]}
+              onPress={() => handlePress(num)}>
+              {/* CAMBIO: números visibles en modo oscuro */}
+              <Text
+                style={[
+                  styles.numberText,
+                  {color: '#5d2bc1'},
+                ]}>
+                {num}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity
+            style={[
+              styles.operatorButton,
+              {backgroundColor: theme.primary},
+            ]}
+            onPress={() => handlePress('×')}>
+            <Text style={styles.actionText}>×</Text>
+          </TouchableOpacity>
+
+          {['4', '5', '6'].map(num => (
+            <TouchableOpacity
+              key={num}
+              style={[
+                styles.numberButton,
+                {backgroundColor: theme.button},
+              ]}
+              onPress={() => handlePress(num)}>
+              <Text
+                style={[
+                  styles.numberText,
+                  {color: '#5d2bc1'},
+                ]}>
+                {num}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity
+            style={[
+              styles.operatorButton,
+              {backgroundColor: theme.primary},
+            ]}
+            onPress={() => handlePress('-')}>
+            <Text style={styles.actionText}>-</Text>
+          </TouchableOpacity>
+
+          {['1', '2', '3'].map(num => (
+            <TouchableOpacity
+              key={num}
+              style={[
+                styles.numberButton,
+                {backgroundColor: theme.button},
+              ]}
+              onPress={() => handlePress(num)}>
+              <Text
+                style={[
+                  styles.numberText,
+                  {color: '#5d2bc1'},
+                ]}>
+                {num}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity
+            style={[
+              styles.operatorButton,
+              {backgroundColor: theme.primary},
+            ]}
+            onPress={() => handlePress('+')}>
+            <Text style={styles.actionText}>+</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.zeroButton,
+              {backgroundColor: theme.button},
+            ]}
+            onPress={() => handlePress('0')}>
+            <Text
+              style={[
+                styles.numberText,
+                {color: '#5d2bc1'},
+              ]}>
+              0
             </Text>
-            <Text style={{color: modoOscuro ? '#FFFFFF' : '#6B35E2', fontSize: 22, fontWeight: '700'}}>
-              Modo noche
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.numberButton,
+              {backgroundColor: theme.button},
+            ]}
+            onPress={() => handlePress('.')}>
+            <Text
+              style={[
+                styles.numberText,
+                {color: '#5d2bc1'},
+              ]}>
+              .
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.operatorButton,
+              {backgroundColor: theme.primary},
+            ]}
+            onPress={calculateResult}>
+            <Text style={styles.actionText}>=</Text>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
-          style={styles.botonPrincipal}
-          onPress={() => navigation.navigate('Calculadora', {modoOscuro})}>
-          <Text style={styles.textoBotonPrincipal}>Empezar</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-function CalculatorScreen({navigation, route}: any) {
-  const modoOscuro = route.params?.modoOscuro ?? true;
-  const [pantalla, setPantalla] = useState('0');
-  const [valorAnterior, setValorAnterior] = useState<number | null>(null);
-  const [operador, setOperador] = useState<string | null>(null);
-  const [nuevoNumero, setNuevoNumero] = useState(true);
-
-  const fondo = modoOscuro ? '#0F1028' : '#F3EAFD';
-  const tarjeta = modoOscuro ? '#15173A' : '#E8DCF7';
-  const texto = modoOscuro ? '#FFFFFF' : '#5A22B8';
-
-  const presionarNumero = (numero: string) => {
-    if (nuevoNumero) {
-      setPantalla(numero);
-      setNuevoNumero(false);
-    } else {
-      setPantalla(pantalla === '0' ? numero : pantalla + numero);
-    }
-  };
-
-  const presionarPunto = () => {
-    if (!pantalla.includes('.')) {
-      setPantalla(pantalla + '.');
-    }
-  };
-
-  const limpiar = () => {
-    setPantalla('0');
-    setValorAnterior(null);
-    setOperador(null);
-    setNuevoNumero(true);
-  };
-
-  const calcular = (valorActual: number, valorPrevio: number, operacion: string) => {
-    switch (operacion) {
-      case '+':
-        return valorPrevio + valorActual;
-      case '-':
-        return valorPrevio - valorActual;
-      case '×':
-        return valorPrevio * valorActual;
-      case '÷':
-        return valorActual === 0 ? 'Error' : valorPrevio / valorActual;
-      default:
-        return valorActual;
-    }
-  };
-
-  const presionarOperador = (operacion: string) => {
-    const valorActual = parseFloat(pantalla);
-
-    if (valorAnterior === null) {
-      setValorAnterior(valorActual);
-    } else if (operador) {
-      const resultado = calcular(valorActual, valorAnterior, operador);
-      setPantalla(String(resultado));
-      setValorAnterior(typeof resultado === 'number' ? resultado : null);
-    }
-
-    setOperador(operacion);
-    setNuevoNumero(true);
-  };
-
-  const presionarIgual = () => {
-    if (valorAnterior !== null && operador) {
-      const resultado = calcular(parseFloat(pantalla), valorAnterior, operador);
-      setPantalla(String(resultado));
-      setValorAnterior(null);
-      setOperador(null);
-      setNuevoNumero(true);
-    }
-  };
-
-  const botones = [
-    ['C', '÷'],
-    ['7', '8', '9', '×'],
-    ['4', '5', '6', '-'],
-    ['1', '2', '3', '+'],
-    ['0', '.', '='],
-  ];
-
-  return (
-    <SafeAreaView style={[styles.container, {backgroundColor: fondo}]}>
-      <View style={[styles.calculadoraCard, {backgroundColor: tarjeta}]}>
-        <Text style={styles.pequeno}>Pantalla calculadora</Text>
-
-        <View style={styles.resultadoBox}>
-          <Text style={styles.operacionTexto}>{operador ? `${valorAnterior} ${operador}` : 'Tecmi Calculator'}</Text>
-          <Text style={styles.resultadoTexto} numberOfLines={1}>
-            {pantalla}
+          style={[
+            styles.backButton,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+          onPress={() => setCurrentScreen('home')}>
+          <Text
+            style={[
+              styles.backText,
+              {color: theme.primary},
+            ]}>
+            Regresar
           </Text>
-        </View>
-
-        <View style={styles.teclado}>
-          {botones.map((fila, index) => (
-            <View key={index} style={styles.filaBotones}>
-              {fila.map(boton => {
-                const esOperacion = ['+', '-', '×', '÷', '='].includes(boton);
-                const esLimpiar = boton === 'C';
-
-                return (
-                  <TouchableOpacity
-                    key={boton}
-                    style={[
-                      styles.botonCalculadora,
-                      esOperacion && styles.botonOperacion,
-                      esLimpiar && styles.botonLimpiar,
-                      boton === '0' && styles.botonCero,
-                    ]}
-                    onPress={() => {
-                      if (!isNaN(Number(boton))) presionarNumero(boton);
-                      else if (boton === '.') presionarPunto();
-                      else if (boton === 'C') limpiar();
-                      else if (boton === '=') presionarIgual();
-                      else presionarOperador(boton);
-                    }}>
-                    <Text style={[styles.textoBotonCalc, {color: esOperacion || esLimpiar ? '#FFFFFF' : texto}]}>
-                      {boton}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          ))}
-        </View>
-
-        <TouchableOpacity style={styles.botonRegresar} onPress={() => navigation.goBack()}>
-          <Text style={styles.textoRegresar}>Regresar</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  );
-}
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Inicio" component={HomeScreen} />
-        <Stack.Screen name="Calculadora" component={CalculatorScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
   );
 }
 
@@ -240,149 +395,171 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
+
   card: {
-    width: '100%',
+    width: '88%',
     borderRadius: 35,
-    paddingVertical: 40,
-    paddingHorizontal: 25,
+    padding: 25,
     alignItems: 'center',
   },
-  calculadoraCard: {
-    width: '100%',
-    borderRadius: 35,
-    paddingVertical: 28,
-    paddingHorizontal: 22,
-    alignItems: 'center',
-  },
-  pequeno: {
-    color: '#8A2EFF',
-    fontSize: 18,
+
+  subtitle: {
+    fontSize: 20,
     fontWeight: '700',
-    marginBottom: 28,
+    marginBottom: 20,
   },
-  iconoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 30,
-    backgroundColor: '#D33CB5',
+
+  logo: {
+    width: 145,
+    height: 145,
+    borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 25,
   },
-  estrella: {
-    color: '#FFFFFF',
-    fontSize: 45,
-    fontWeight: 'bold',
+
+  logoText: {
+    fontSize: 60,
+    color: '#ffffff',
   },
-  titulo: {
+
+  title: {
     fontSize: 62,
     fontWeight: '900',
     textAlign: 'center',
-    lineHeight: 70,
+    lineHeight: 68,
+  },
+
+  description: {
+    fontSize: 18,
+    textAlign: 'center',
+    lineHeight: 42,
+    marginTop: 30,
     marginBottom: 30,
   },
-  descripcion: {
-    fontSize: 19,
-    textAlign: 'center',
-    lineHeight: 35,
-    marginBottom: 45,
-    paddingHorizontal: 10,
-  },
-  botonesModo: {
+
+  modeContainer: {
     flexDirection: 'row',
     gap: 15,
-    marginBottom: 40,
+    marginBottom: 30,
   },
-  botonModo: {
-    width: 145,
-    height: 105,
+
+  modeButton: {
+    width: 150,
+    height: 110,
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconoModo: {
-    fontSize: 28,
+
+  modeIcon: {
+    fontSize: 35,
     marginBottom: 10,
   },
-  textoMorado: {
-    color: '#6B35E2',
-    fontSize: 22,
+
+  modeText: {
+    fontSize: 18,
     fontWeight: '700',
   },
-  botonPrincipal: {
+
+  startButton: {
     width: '100%',
     paddingVertical: 22,
     borderRadius: 25,
-    backgroundColor: '#8A2EFF',
     alignItems: 'center',
   },
-  textoBotonPrincipal: {
-    color: '#FFFFFF',
+
+  startButtonText: {
+    color: '#ffffff',
     fontSize: 24,
-    fontWeight: '800',
-  },
-  resultadoBox: {
-    width: '100%',
-    backgroundColor: '#080615',
-    borderRadius: 28,
-    padding: 24,
-    marginBottom: 25,
-    alignItems: 'flex-end',
-  },
-  operacionTexto: {
-    color: '#BFA8FF',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  resultadoTexto: {
-    color: '#FFFFFF',
-    fontSize: 48,
     fontWeight: '900',
   },
-  teclado: {
+
+  displayContainer: {
     width: '100%',
-    gap: 12,
+    height: 140,
+    borderRadius: 35,
+    padding: 18,
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: 30,
   },
-  filaBotones: {
+
+  expressionText: {
+    fontSize: 22,
+    alignSelf: 'stretch',
+    textAlign: 'right',
+  },
+
+  displayText: {
+    fontSize: 70,
+    fontWeight: '900',
+  },
+
+  buttonsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 12,
   },
-  botonCalculadora: {
-    flex: 1,
-    height: 68,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+
+  actionButton: {
+    width: '47%',
+    height: 85,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  botonOperacion: {
-    backgroundColor: '#8A2EFF',
-  },
-  botonLimpiar: {
-    backgroundColor: '#D33CB5',
-  },
-  botonCero: {
-    flex: 2,
-  },
-  textoBotonCalc: {
-    fontSize: 27,
-    fontWeight: '900',
-  },
-  botonRegresar: {
-    width: '100%',
-    marginTop: 22,
-    paddingVertical: 16,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#8A2EFF',
+
+  operatorButton: {
+    width: '22%',
+    height: 85,
+    borderRadius: 25,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  textoRegresar: {
-    color: '#8A2EFF',
-    fontSize: 20,
+
+  numberButton: {
+    width: '22%',
+    height: 85,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  zeroButton: {
+    width: '47%',
+    height: 85,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  actionText: {
+    color: '#ffffff',
+    fontSize: 34,
+    fontWeight: '900',
+  },
+
+  numberText: {
+    fontSize: 34,
+    fontWeight: '900',
+  },
+
+  backButton: {
+    width: '100%',
+    borderWidth: 3,
+    borderRadius: 25,
+    paddingVertical: 18,
+    alignItems: 'center',
+    marginTop: 28,
+  },
+
+  backText: {
+    fontSize: 24,
     fontWeight: '800',
   },
 });
+
+export default App;
