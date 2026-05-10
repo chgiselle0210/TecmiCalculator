@@ -100,10 +100,12 @@ To learn more about React Native, take a look at the following resources:
 
 <img width="605" height="1019" alt="image" src="https://github.com/user-attachments/assets/10daac99-5bfd-4ee6-aea4-0f3010dda259" />
 
+
 <img width="600" height="1019" alt="image" src="https://github.com/user-attachments/assets/07114b28-5de5-499d-91c2-f6c44f6cdc78" />
 
 # Interfaz modo oscuro
 
 <img width="606" height="1025" alt="image" src="https://github.com/user-attachments/assets/a3d91846-4de8-433b-985a-8baf2785d0f4" />
+
 
 <img width="607" height="1023" alt="image" src="https://github.com/user-attachments/assets/bd24c47f-c46b-4316-a719-609ec7f289c2" />
